@@ -159,23 +159,28 @@ WB80             u       600
 
 *BEGIN Wall_3D
 
-!       Side Reflector
+!       Side Reflector and shield
 WB10    Side_Reflector                  2-D     c          1
 !       radial segment and axial and y direction
-WB60    10         10         1
+WB60    10         24         1
 !       r direction inner  bottom    south
-WB61    0.6454           0             0       0.00113
+WB61    0.6454       -0.4             0       0.00113
 !       sub region and material property
-WB62    kr1          1       1
-				jr1          1      10
-				ir1          1.025  10  n     tbl_id  PbO
+WB62    kr1          1         1
+				jr1          1.6      16
+				ir1          0.93     5       n     tbl_id     PbO
+        ir2          1.03     10      n     tbl_id     Shield
+        jr2          2.4      24
+        ir2          1.03     10      n     tbl_id     Shield
+
 !       west boundary
-WB71    q         0        10
+WB71    q         0        24
 !       east boundary
-WB72    a        10
+WB72    q        0         24
 !       heat transfer correlations
-!       up and bottom boundary
+!       bottom boundary
 WB73    a         10
+!       Top boundary
 WB74    a         10
 !       Initial condition
 WB80    u         600
@@ -183,6 +188,9 @@ WB81    u         600
 WB82    u         600
 WB83    u         600
 WB84    u         600
+
+
+
 *END Wall_3D
 
 
@@ -193,9 +201,13 @@ RM10    Fuel_Side_Reflector            ccd        0           500
 !       card name   position          emmis
 !       conduction
 RM20    fuel                  R        1       1     1
-RM21    Side_Reflector        w        1       1     1 1 1
+RM21    Side_Reflector        w        1       1     1  5   5
 !       dir         num   inc
 RM25    j         10        1
+
+
+
+
 *END Therm_Rad
 
 
@@ -317,6 +329,15 @@ GT30    1373.15              6490360             27
 !       --------------------------------------
 !       GT_ID               GT_No
 GT00    PbO                 15
+GT10    temp                wcp                 wk
+!       Var.indep           Var.depen(1) den;cp        Var.depen(2)
+GT30    293.15                 1955956.26                3.16
+GT30    1373.15                1955956.26                3.16
+
+!       Shield
+!       --------------------------------------
+!       GT_ID               GT_No
+GT00    Shield              16
 GT10    temp                wcp                 wk
 !       Var.indep           Var.depen(1) den;cp        Var.depen(2)
 GT30    293.15                 1955956.26                3.16
