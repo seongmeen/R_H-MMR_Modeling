@@ -240,7 +240,7 @@ BB20  0.1    650
 *BEGIN Ext_Path
 
 !       Junction ID         UPstream: face/blk             DNstream: face/blk
-JB10    Ju_0        V    BC_in   L   Flow_upward
+JB10    Ju_0        V    BC_ex   L   Flow_upward
 !       flow boundary & control
 JB15    f           0.17
 !       Jform       Jun.area            KFloss      KRloss
