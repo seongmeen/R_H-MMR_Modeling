@@ -1,0 +1,368 @@
+!       Number 1 test
+
+*BEGIN Sol_Con
+
+SC00    Exercise #2: over-pressurizing and release
+SC00    Code Version: Rev01/Mod03
+/
+!       init_time   run_time    deltime0    dt_scale
+!       too small time step and mesh size should be stablized
+SC10    0  80000.000   0.01389     1.00        
+!       gen_inp     rst_id      rst file
+SC11    y           0           model1.gen.rst
+!       Pres_eps    Vel_eps     max_oiter
+SC15    1.00e-03    1.00e+04    4  
+!       user_time   max_dt       plot      output     restart
+SC30       10000.0  0.5000         10     500.000      30.000
+/
+!       SysID     Ngas  1st   2nd   3rd   4th   5th   6th
+SC50    Air_Loop    1  air   
+!       SysNo mod_eos mode_tp mode_md
+!SC53   1       c       t       f        
+
+*END Sol_Con
+
+
+*BEGIN Fluid_1D
+
+FB10    Ar_in               1-D     air     1   
+FB20    1    40      
+FB21    0.00000       5       
+FB25    0.00000e+00   40 
+FB30    0.2158   40 
+FB35     0.12500      40 
+FB40    -0.12500      40 
+FB45    0.06000       40 
+FB50    1.000e-05     ccen    0.974     0.0000    
+FB60       0.1013                      40
+FB70         20                     40
+FB90         s                        0                  39
+FB91         f                        0                  39
+
+
+
+FB10    PP                  1-D     air     1   
+FB20    1    4       
+FB21    0.00000       0.00000       
+FB25    0.00000e+00    4 
+FB30    0.2158         4 
+FB35     0.035         4 
+FB40     0.00000       4 
+FB45    0.06000        4 
+FB50    1.000e-05    circ    0.00000     0.0000    
+FB60    0.1013         4
+FB70    20             4
+FB90    s      0       3   
+FB91    f     0        3
+
+
+
+
+FB10    Ar_out              1-D     air     1   
+FB20    1    40      
+FB21    0.00000       5    
+FB25    0.00000e+00   40 
+FB30    0.2064        40 
+FB35     0.12500      40 
+FB40     0.12500      40 
+FB45    0.06000       40 
+FB50    1.000e-05     ccen    0.973     0.0000    
+FB60       0.1013                      40
+FB70         20                        40
+FB90         s                        0                  39
+FB91         f                        0                  39
+
+*END Fluid_1D
+
+
+*BEGIN Bound_Vol
+
+BB10    BC_in               in        air     1   
+BB20    0.10132500  20.000    
+
+BB10    BC_ex               ex        air     1   
+BB20    0.10132500  20
+
+*END Bound_Vol
+
+
+*BEGIN Ext_Path
+
+!       Junction ID         UPstream: face/blk             DNstream: face/blk
+JB10    Ju_1                V  BC_in                       L  Ar_in                       
+!       flow boundary & control
+!JB15   f           0.34
+!       Jform       Jun.area            KFloss      KRloss
+JB20    s           0.00000e+00         0.42      0       
+!       Jflag       Jflow
+JB25    v           0
+
+JB10    Ju_2                R  Ar_in                       L  PP                          
+JB20    s           0.00000e+00         0.3000     0.0000            
+JB25    v           0
+
+JB10    Ju_3                R  PP                          L  Ar_out                      
+JB20    s           0.00000e+00         0.302      0.0000          
+JB25    v           0 
+
+JB10    Ju_4                R  Ar_out                      V  BC_ex                       
+JB20    s           0.00000e+00         1.0000      0.0000           
+JB25    v           0
+
+*END Ext_Path
+
+
+*BEGIN Wall_3D
+
+!       Reactor vessel
+WB10    RV                  2-D     c          1
+!       radial segment and axial and y direction
+WB60    5         40         1       
+!       r direction inner  bottom    south 
+WB61    1.03           0             0 
+!       sub region and material property
+WB62    kr1            1     1
+				jr1          5      40     
+				ir1          1.08    5  n     tbl_id  sa533
+!       west boundary 
+WB71    f    500         40
+!       east boundary
+WB72    c     Ar_out                  1     40    40 
+!       heat transfer correlations
+WB721   vert_p    0.00000     1.00000     5       166.66  1.028
+!       up and bottom boundary
+WB73    a         5
+WB74    a         5
+!       Initial condition
+WB80    u         500
+WB81    u         500
+WB82    u         500
+WB83    u         500
+WB84    u         500
+
+
+!       Air seperator
+WB10    SP                  2-D     c          1
+!       radial segment and axial and y direction
+WB60    5         40         1       
+!       r direction inner  bottom    south 
+WB61    1.11           0             0 
+!       sub region and material property
+WB62    kr1            1     1
+				jr1            5    40     
+				ir1          1.13    5  n     tbl_id  ss310
+!       west boundary 
+WB71    c     Ar_out                  1     40    40    
+WB711   vert_p    0.00000     1.00000     5.00000   166.66  1.028
+!       east boundary
+WB72    c     Ar_in                   40    1     40    
+!       heat transfer correlations
+WB721   vert_p    0.00000     1.00000     5.00000   166.66  1.027   
+!       up and bottom boundary
+WB73    a         5
+WB74    a         5
+!       Initial condition
+WB80    u         400
+WB81    u         400
+WB82    u         400
+WB83    u         400
+WB84    u         400
+
+
+!       Air vessel
+WB10    AV                  2-D     c          1
+!       radial segment and axial and y direction
+WB60    5         40         1       
+!       r direction inner  bottom    south 
+WB61    1.16           0             0 
+!       sub region and material property
+WB62    kr1            1     1
+				jr1          5    40     
+				ir1          1.18    5  n     tbl_id  ss310
+!       west boundary 
+WB71    c     Ar_in                   40    1     40    
+WB711   vert_p    0.00000     1.00000     5.00000   166.66  1.027    
+!       east boundary
+WB72    a         40
+!       heat transfer correlations
+WB73    a         5
+WB74    a         5
+!       Initial condition
+WB80    u         250
+WB81    u         250
+WB82    u         250
+WB83    u         250
+WB84    u         250
+
+
+
+
+
+
+*END Wall_3D
+
+
+*BEGIN Therm_Rad
+
+RM10    RV_SP               gda     
+!       card name   position   emmis      
+RM20    RV                  e       0.70000     1     1    1 1   
+RM20    SP                  w       0.40000     1     1    1 1
+!       dir         num   inc
+RM25    j         40        1  
+!       View factor matrix
+RM30    0.000000  1.000000  
+RM30    0.972972973  0.027027027
+
+
+!RM30   1  0
+RM10    SP_AV               gda     
+!       card name   position   emmis      
+RM20    SP                  e       0.40000     1     1    1  1
+RM20    AV                  w       0.40000     1     1    1  1
+!       dir         num   inc
+RM25    j         40        1  
+!       View factor matrix
+RM30    0.000000  1.000000  
+!RM30   1        0
+RM30    0.974137931  0.025862069  
+
+
+
+*END Therm_Rad
+
+
+*BEGIN Gen_Table
+
+!       air flow control
+!       --------------------------
+!       GT_ID               GT_No
+GT00    air_flow            100
+!       Var.indep           Var.depen   
+GT10    time                flow               
+GT20    0.0000e+00          0.0000e+00         
+GT20    1.0000e+01          1.4220e-01         
+GT20    1.0000e+08          1.4220e-01         
+
+GT00    heat                200
+!       Var.indep           Var.depen   
+GT10    time                power              
+GT20    0.0000e+00          0.0000e+00         
+GT20    1.0000e+01          2.0400e+04         
+GT20    1.0000e+08          2.0400e+04         
+
+!       Sodium Pool
+!       --------------------------------------
+!       GT_ID               GT_No
+GT00    Na_pool             15
+GT10    temp                wcp                 wk                 
+!       Var.indep           Var.depen(1)        Var.depen(2)
+GT30    2.9315e+02          1.3477e+06          9.4548e+02         
+GT30    3.7315e+02          1.2823e+06          9.2696e+02         
+GT30    4.7315e+02          1.2100e+06          9.0358e+02         
+GT30    5.7315e+02          1.1477e+06          8.7998e+02         
+GT30    6.7315e+02          1.0947e+06          8.5619e+02         
+GT30    7.7315e+02          1.0504e+06          8.3224e+02         
+GT30    8.7315e+02          1.0142e+06          8.0816e+02         
+GT30    9.7315e+02          9.8551e+05          7.8400e+02         
+GT30    1.0732e+03          9.6368e+05          7.5978e+02         
+GT30    1.1732e+03          9.4808e+05          7.3554e+02         
+GT30    1.2732e+03          9.3808e+05          7.1132e+02         
+GT30    1.3732e+03          9.3306e+05          6.8714e+02         
+
+!       ODS cladding
+!       --------------------------------------
+!       GT_ID               GT_No
+GT00    ODS_temp            16
+GT10    temp                wcp                 wk                 
+!       Var.indep           Var.depen(1)        Var.depen(2)
+GT30    2.9315e+02          5.0809e+06          1.0900e+01         
+GT30    3.7315e+02          5.0809e+06          1.2200e+01         
+GT30    4.7315e+02          5.0809e+06          1.3900e+01         
+GT30    5.7315e+02          5.0809e+06          1.5400e+01         
+GT30    6.7315e+02          5.0809e+06          1.6900e+01         
+GT30    7.7315e+02          5.0809e+06          1.8400e+01         
+GT30    8.7315e+02          5.0809e+06          1.9800e+01         
+GT30    9.7315e+02          5.0809e+06          2.1200e+01         
+GT30    1.0732e+03          5.0809e+06          2.2600e+01         
+GT30    1.1732e+03          5.0809e+06          2.4100e+01         
+GT30    1.2732e+03          5.0809e+06          2.5500e+01         
+GT30    1.3732e+03          5.0809e+06          2.7000e+01         
+
+!       SS310
+!       --------------------------------------
+!       GT_ID               GT_No
+GT00    ss310               310
+GT10    temp                wcp                 wk                 
+!       Var.indep           Var.depen(1)        Var.depen(2)
+GT30    2.7315e+02          4.2612e+06          1.2100e+01         
+GT30    2.9815e+02          4.2612e+06          1.2700e+01         
+GT30    3.2315e+02          4.2612e+06          1.3200e+01         
+GT30    3.7315e+02          4.2612e+06          1.4100e+01         
+GT30    4.2315e+02          4.2612e+06          1.5000e+01         
+GT30    4.7315e+02          4.2612e+06          1.5800e+01         
+GT30    5.2315e+02          4.2612e+06          1.6600e+01         
+GT30    5.7315e+02          4.2612e+06          1.7300e+01         
+GT30    6.2315e+02          4.2612e+06          1.8000e+01         
+GT30    6.7315e+02          4.2612e+06          1.8800e+01         
+GT30    7.2315e+02          4.2612e+06          1.9400e+01         
+GT30    7.7315e+02          4.2612e+06          2.0100e+01         
+GT30    8.2315e+02          4.2612e+06          2.0900e+01         
+GT30    8.7315e+02          4.2612e+06          2.2200e+01         
+GT30    9.2315e+02          4.2612e+06          2.3000e+01         
+GT30    9.7315e+02          4.2612e+06          2.3700e+01         
+GT30    1.0231e+03          4.2612e+06          2.4000e+01         
+GT30    1.0732e+03          4.2612e+06          2.4500e+01         
+GT30    1.1232e+03          4.2612e+06          2.5200e+01         
+GT30    1.1732e+03          4.2612e+06          2.6000e+01         
+GT30    1.2232e+03          4.2612e+06          2.6900e+01         
+GT30    1.2732e+03          4.2612e+06          2.7700e+01         
+
+!       SA533BMoalloy
+!       --------------------------------------
+!       GT_ID               GT_No
+GT00    sa533               533
+GT10    temp                wcp                 wk                 
+!       Var.indep           Var.depen(1)        Var.depen(2)
+GT30    2.7315e+02          3.6660e+06          5.2000e+01         
+GT30    2.9815e+02          3.6660e+06          5.2000e+01         
+GT30    1.2732e+03          3.6660e+06          5.2000e+01         
+
+*END Gen_Table
+
+
+*BEGIN Plot_Data
+
+!       PB_ID       File name
+PB10    Plot1       model1     
+!       Variable    blk ID              Cell index       scale factor
+PB20    mflow       Ju_2                0     0     0    
+PB20    Temp        Ar_out              40    0     0    
+PB20    Qrad_W       RV        0     0     0  
+PB20    Qrad_E       RV        0     0     0  
+PB20    Qconv_W       RV        0     0     0  
+PB20    Qconv_E       RV        0     0     0  
+
+!PB20   hmod_L       RV        0      0     0 
+!PB20   hmod_R       RV         0      0     0 
+!PB20   hmod_L       SP         0      0     0 
+!PB20   hmod_R       SP         0      0     0 
+!PB20   hmod_L       AV          0      0     0 
+!PB20   hmod_R       AV          0      0     0 
+PB20    Qflx_W      RV                  0     0     0    
+PB20    Qflx_E      RV                  0     0     0    
+PB20    Qflx_W      SP                  0     0     0    
+PB20    Qflx_E      SP                  0     0     0    
+PB20    Qflx_W      AV                  0     0     0    
+PB20    Qflx_E      AV                  0     0     0    
+PB20    enth        Ar_in               1     1     0    
+PB20    enth        Ar_in               40    1     0    
+PB20    enth        Ar_out              1     1     0    
+PB20    enth        Ar_out              40    1     0    
+PB20    Ts_e        RV                  1     10     0
+
+*END Plot_Data
+
+
+*EOF
+
